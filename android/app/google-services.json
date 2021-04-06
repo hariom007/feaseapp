@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "205244448756",
+    "project_id": "feaseapp-1879c",
+    "storage_bucket": "feaseapp-1879c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:205244448756:android:f38b4b4a29ebd8ac26c3a1",
+        "android_client_info": {
+          "package_name": "com.koffeekodes.feaseappstudent"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "205244448756-m9cdur2rvun2c9r5qh3u4dk5ljo7dljr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAibw7QPVFK-Bo42za-JTYz3hTX26h1lUQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "205244448756-m9cdur2rvun2c9r5qh3u4dk5ljo7dljr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
