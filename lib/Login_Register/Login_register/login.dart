@@ -261,7 +261,7 @@ class _LoginPageState extends State<LoginPage> with ValidationMixin {
                                 Form(
                                   key: _formKey,
                                   child: Padding(
-                                    padding: EdgeInsets.symmetric(horizontal: width*0.07),
+                                    padding: EdgeInsets.symmetric(horizontal: 15),
                                     child: Material(
                                       shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(2)
@@ -307,6 +307,7 @@ class _LoginPageState extends State<LoginPage> with ValidationMixin {
                                               controller: mobileNumberController,
                                               decoration: InputDecoration(
                                                   hintText: "Enter Mobile number",
+                                                  isDense: true,
                                                   hintStyle: TextStyle(
                                                       color: AppColors.grey_20,
                                                       fontFamily: 'Montserrat-Semibold',

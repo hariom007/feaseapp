@@ -274,7 +274,7 @@ class _MyProfileState extends State<MyProfile> {
                       barrierDismissible: false,
                       builder: (BuildContext context) {
                         return AlertDialog(
-                          title: Text('Exit',
+                          title: Text('Exit?',
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
