@@ -667,7 +667,7 @@ class _FillInstituteDetailsState extends State<FillInstituteDetails> with Valida
                                   ),
 
                                   //University
-                                  bindInstituteType.name =="COLLEGE" ?
+                                  // bindInstituteType.name =="COLLEGE" && bindInstituteType.name == null  ?
                                   Container(
                                     margin: EdgeInsets.only(left: 20,right: 20,bottom: 20),
                                     decoration: BoxDecoration(
@@ -725,10 +725,10 @@ class _FillInstituteDetailsState extends State<FillInstituteDetails> with Valida
                                         }).toList(),
                                       ),
                                     ),
-                                  ) : Container(),
+                                  ) /*: Container()*/,
 
                                   //Board type
-                                  bindInstituteType.name == "SCHOOL" ?
+                                  // bindInstituteType.name == "SCHOOL" && bindInstituteType.name == null ?
                                   Container(
                                     margin: EdgeInsets.only(left: 20,right: 20,bottom: 20),
                                     decoration: BoxDecoration(
@@ -785,7 +785,7 @@ class _FillInstituteDetailsState extends State<FillInstituteDetails> with Valida
                                         }).toList(),
                                       ),
                                     ),
-                                  ) : Container(),
+                                  ) /*: Container()*/,
 
                                   //Campus
                                   Container(

@@ -35,7 +35,7 @@ class _UploadInstituedocumentsState extends State<UploadInstituedocuments> {
   String _extension;
   bool _loadingPath = false;
   bool _multiPick = false;
-  FileType _pickingTypes = FileType.any;
+  FileType _pickingTypes = FileType.image;
   TextEditingController _controller = new TextEditingController();
 
   List<GetDocumentList> _getDocList = [];
