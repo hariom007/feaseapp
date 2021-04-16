@@ -667,8 +667,8 @@ class _FillInstituteDetailsState extends State<FillInstituteDetails> with Valida
                                   ),
 
                                   //University
-                                  // bindInstituteType.name =="COLLEGE" && bindInstituteType.name == null  ?
-                                  Container(
+                                  bindInstituteType == null ? Container(): bindInstituteType.name == "COLLEGE" ?
+                                    Container(
                                     margin: EdgeInsets.only(left: 20,right: 20,bottom: 20),
                                     decoration: BoxDecoration(
                                         border: Border.all(
@@ -725,10 +725,9 @@ class _FillInstituteDetailsState extends State<FillInstituteDetails> with Valida
                                         }).toList(),
                                       ),
                                     ),
-                                  ) /*: Container()*/,
-
+                                  ): Container(),
                                   //Board type
-                                  // bindInstituteType.name == "SCHOOL" && bindInstituteType.name == null ?
+                                  bindInstituteType == null ? Container():bindInstituteType.name =="SCHOOL"?
                                   Container(
                                     margin: EdgeInsets.only(left: 20,right: 20,bottom: 20),
                                     decoration: BoxDecoration(
@@ -785,7 +784,7 @@ class _FillInstituteDetailsState extends State<FillInstituteDetails> with Valida
                                         }).toList(),
                                       ),
                                     ),
-                                  ) /*: Container()*/,
+                                  ): Container(),
 
                                   //Campus
                                   Container(
@@ -1281,12 +1280,14 @@ class ValidationMixin {
     }
     return null;
   }
+
   String validateindexno(String value) {
     if (value.isEmpty) {
       return 'Please enter Index No.\n';
     }
     return null;
   }
+  
   String validatecentercode(String value) {
     if (value.isEmpty) {
       return 'Please enter Center Code\n';
@@ -1294,5 +1295,9 @@ class ValidationMixin {
     return null;
   }
 
-
 }
+
+//com.feaseapp
+// MD5: B6:37:C4:F1:AA:EF:7F:64:2A:BD:AC:9F:9E:47:AD:D6
+// SHA1: 49:6C:C2:86:19:7E:E1:00:B7:9B:94:0E:C7:DD:A3:50:88:A0:CF:31
+// SHA-256: A6:31:1B:98:A2:DE:FF:F3:45:2D:1A:B2:EC:EA:E7:AE:53:86:80:56:B5:0A:B1:10:B0:09:65:58:48:3D:1F:79

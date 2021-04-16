@@ -1,11 +1,12 @@
 import 'dart:convert';
-
+import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:feaseapp/API/api.dart';
 import 'package:feaseapp/Login_Register/Institute_verify/verifivationPending.dart';
 import 'package:feaseapp/Values/AppColors.dart';
 import 'package:pie_chart/pie_chart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
 
@@ -17,14 +18,22 @@ class HomePage extends StatefulWidget {
 }
 enum LegendShape { Circle, Rectangle }
 
+
 class _HomePageState extends State<HomePage> {
 
   bool isLoaded= false;
-  Map<String, double> dataMap = {
-    "Total fee": 205000,
-    "Pending fee": 105000,
-    "Today fee": 50000,
+  var collectedFee = "", pendingFee="", todayFee="" ;
+  int cFee =0,pFee =0,tFee =0;
+  SharedPreferences sharedPreferences;
+
+
+  Map<String, String> dataMap = {
+      "Today Fee": '',
+      "Pending fee": '105000',
+      "Today fee": '',
   };
+
+
 
   List<Color> colorList = [
     Colors.red,
@@ -32,13 +41,15 @@ class _HomePageState extends State<HomePage> {
     Colors.blue,
   ];
 
+
   bool isLoading = false;
+  String Name="";
 
   void checkVerificationStatus() async {
     var data = {
       "RegInstCode":'${widget.regiInstiCode}'
     };
-    print(data);
+    // print(data);
     try {
       setState(() {
         isLoading=true;
@@ -46,7 +57,7 @@ class _HomePageState extends State<HomePage> {
 
       var res = await CallApi().postData(data, 'CheckVerificationStatus');
       var body = json.decode(res.body);
-      print('${widget.regiInstiCode}'+"============"+body.toString());
+      // print('${widget.regiInstiCode}'+"============"+body.toString());
 
       if (body['ddlNm'] != 'Institute Is Verified.' )
       {
@@ -73,18 +84,89 @@ class _HomePageState extends State<HomePage> {
       print('print error: $e');
     }
   }
+
+
+  void feeCollection() async {
+    var data = {
+      "RegInstCode":'${widget.regiInstiCode}'
+    };
+    // print(data);
+    try {
+      setState(() {
+        isLoading=true;
+      });
+
+      var res = await CallApi().postData(data, 'FeesCollectionStatus');
+      var body = json.decode(res.body);
+      // print('${widget.regiInstiCode}'+"============"+body.toString());
+      // print(body);
+
+      if (body['Msg'] != 'Institute Code is not registered' )
+      {
+        // print('Total fee');
+        collectedFee = body['TotalCollectedFees'];
+        pendingFee = body['TotalPendingFees'];
+        todayFee = body['TodaysFeesCollection'];
+
+      }
+
+      setState(() {
+        isLoading=false;
+      });
+
+    }
+
+    catch(e){
+      print('print error: $e');
+    }
+  }
+
+  void profileShow() async {
+    sharedPreferences = await SharedPreferences.getInstance();
+    var mobileNum = sharedPreferences.getString("MOB");
+
+    var data = {
+      "MobileNo": mobileNum
+    };
+    try {
+      setState(() {
+        isLoading=true;
+      });
+
+      var res = await CallApi().postData3(data, 'GetStaffPersonalDetail');
+      var body = json.decode(res.body);
+
+      if (body != null )
+      {
+        Name = body['Name'];
+      }
+
+      setState(() {
+        isLoading=false;
+      });
+
+    }
+
+    catch(e){
+      print('print error: $e');
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     checkVerificationStatus();
+    profileShow();
+
+    feeCollection();
   }
 
 
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    return isLoaded? Scaffold(
+    return isLoaded ? Scaffold(
       appBar:PreferredSize(
         preferredSize: Size.fromHeight(100.0),
         child: Padding(
@@ -139,7 +221,7 @@ class _HomePageState extends State<HomePage> {
 
                   Padding(
                       padding: EdgeInsets.only(left: 20,top: 20,bottom: 25),
-                    child: Text('Hello Hariom,',
+                    child: Text(Name,
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold
@@ -279,7 +361,7 @@ class _HomePageState extends State<HomePage> {
                                             height: 20,)
                                         ),
                                         TextSpan(
-                                          text: "50000",
+                                          text: todayFee.toString(),
                                         ),
                                       ],
                                     ),
@@ -354,7 +436,7 @@ class _HomePageState extends State<HomePage> {
                                             height: 20,)
                                         ),
                                         TextSpan(
-                                          text: "205000",
+                                          text: collectedFee.toString(),
                                         ),
                                       ],
                                     ),
@@ -413,7 +495,7 @@ class _HomePageState extends State<HomePage> {
                                             height: 20,)
                                         ),
                                         TextSpan(
-                                          text: "105000",
+                                          text: pendingFee.toString(),
                                         ),
                                       ],
                                     ),
@@ -430,36 +512,44 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   SizedBox(height: 40,),
-                  PieChart(
-                    dataMap: dataMap,
-                    animationDuration: Duration(milliseconds: 100),
-                    chartLegendSpacing: 62,
-                    chartRadius: MediaQuery.of(context).size.width / 2.5,
-                    colorList: colorList,
-                    initialAngleInDegree: 0,
-                    chartType: ChartType.ring,
-                    ringStrokeWidth: 30,
-                    centerText: "Student\n Graph",
-                    legendOptions: LegendOptions(
-                      showLegendsInRow: false,
-                      legendPosition: LegendPosition.right,
-                      showLegends: true,
-                      legendShape: BoxShape.circle,
-                      legendTextStyle: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Montserrat-semibold'
+
+                  Padding(
+                    padding: const EdgeInsets.only(left: 50),
+                    child: PieChart(
+                      dataMap: {
+                        'Today Fee' : double.tryParse(collectedFee),
+                        "Pending fee": double.tryParse(pendingFee),
+                        "Today fee": double.tryParse(todayFee),
+                      },
+                      animationDuration: Duration(milliseconds: 100),
+                      chartLegendSpacing: 62,
+                      chartRadius: MediaQuery.of(context).size.width,
+                      colorList: colorList,
+                      initialAngleInDegree: 0,
+                      chartType: ChartType.ring,
+                      ringStrokeWidth: 30,
+                      centerText: "Student\n Graph",
+                      legendOptions: LegendOptions(
+                        showLegendsInRow: false,
+                        legendPosition: LegendPosition.right,
+                        showLegends: true,
+                        legendShape: BoxShape.circle,
+                        legendTextStyle: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Montserrat-semibold'
+                        ),
                       ),
-                    ),
-                    chartValuesOptions: ChartValuesOptions(
-                      showChartValueBackground: true,
-                      showChartValues: true,
-                      chartValueBackgroundColor: AppColors.primaryColor,
-                      showChartValuesInPercentage: false,
-                      showChartValuesOutside: true,
-                      chartValueStyle: TextStyle(
-                        fontFamily: 'Montserrat-semibold',
-                        color: AppColors.black
-                      )
+                      chartValuesOptions: ChartValuesOptions(
+                        showChartValueBackground: true,
+                        showChartValues: true,
+                        chartValueBackgroundColor: AppColors.primaryColor,
+                        showChartValuesInPercentage: false,
+                        showChartValuesOutside: true,
+                        chartValueStyle: TextStyle(
+                          fontFamily: 'Montserrat-semibold',
+                          color: AppColors.black
+                        )
+                      ),
                     ),
                   ),
 

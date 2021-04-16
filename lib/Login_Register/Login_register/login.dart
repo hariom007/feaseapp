@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:country_pickers/country.dart';
 import 'package:country_pickers/country_picker_dialog.dart';
 import 'package:country_pickers/utils/utils.dart';
@@ -20,25 +21,50 @@ class _LoginPageState extends State<LoginPage> with ValidationMixin {
 
   int _state = 0;
   bool tandc = false;
-  String _status;
-  AuthCredential _phoneAuthCredential;
-  String _verificationId;
-  int _code;
   bool isLoading = false;
   final _formKey= GlobalKey<FormState>();
 
   TextEditingController mobileNumberController = TextEditingController();
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  Country _country= CountryPickerUtils.getCountryByPhoneCode('91');
 
-  void _handleError(e) {
-    print(e.message);
-    setState(() {
-      _status += e.message + '\n';
-    });
+  //Login click with contact number validation
+  Future<void> clickOnLogin(BuildContext context) async {
+    if (mobileNumberController.text.isEmpty) {
+      showErrorDialog(context, 'Contact number can\'t be empty.');
+    } else {
+      final responseMessage = await Navigator.pushNamed(context, '/otpScreen', arguments: '+${_country.phoneCode}${mobileNumberController.text}');
+
+      if (responseMessage != null) {
+        showErrorDialog(context, responseMessage as String);
+      }
+    }
   }
 
-  Country _country= CountryPickerUtils.getCountryByPhoneCode('91');
+  //Alert dialogue to show error and response
+  void showErrorDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+
+          title: const Text('Error'),
+          content: Text('\n$message'),
+          actions: <Widget>[
+            CupertinoDialogAction(
+              isDefaultAction: true,
+              child: const Text('Yes'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            )
+          ],
+        );
+      },
+    );
+  }
 
   void _openCountryPickerDialog() => showDialog(
     context: context,
@@ -88,64 +114,6 @@ class _LoginPageState extends State<LoginPage> with ValidationMixin {
     ),
   );
 
-  Future<void> loginUser(String phone) async{
-
-    void verificationCompleted(AuthCredential phoneAuthCredential) {
-      print('verificationCompleted');
-      setState(() {
-        _status += 'verificationCompleted';
-      });
-      this._phoneAuthCredential = phoneAuthCredential;
-      print(phoneAuthCredential);
-    }
-
-    void verificationFailed(FirebaseAuthException error) {
-      print('verificationFailed');
-      _handleError(error);
-
-      if (error.code == 'invalid-phone-number') {
-        print('The provided phone number is not valid.');
-      }
-    }
-
-    void codeSent(String verificationId, [int code]) {
-      print('codeSent');
-      this._verificationId = verificationId;
-      print(verificationId);
-      this._code = code;
-      // print(code.toString());
-      setState(() {
-        _status += 'Code Sent\n';
-      });
-
-    }
-
-    void codeAutoRetrievalTimeout(String verificationId) {
-      Duration(seconds: 60);
-      print('codeAutoRetrievalTimeout');
-      setState(() {
-        _status += 'codeAutoRetrievalTimeout\n';
-      });
-      print(verificationId);
-    }
-
-    try {
-      await FirebaseAuth.instance.verifyPhoneNumber(
-        phoneNumber: phone,
-        timeout: Duration(seconds: 60),
-        verificationCompleted: verificationCompleted,
-        verificationFailed: verificationFailed,
-        codeSent: codeSent,
-        codeAutoRetrievalTimeout: codeAutoRetrievalTimeout,
-      );
-    }
-
-    catch (e){
-      print(e);
-    }
-  }
-
-
 
   void showInSnackBar(String args) {
     _scaffoldKey.currentState.showSnackBar(
@@ -186,14 +154,13 @@ class _LoginPageState extends State<LoginPage> with ValidationMixin {
     });
 
     Timer(Duration(milliseconds: 2200), () {
-      String phone= '+${_country.phoneCode}' + mobileNumberController.text;
 
       setState(() {
         _state = 2;
         setState(() {
           isLoading =true;
         });
-        loginUser(phone);
+        clickOnLogin(context);
       });
 
     });
@@ -206,9 +173,7 @@ class _LoginPageState extends State<LoginPage> with ValidationMixin {
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
       key: _scaffoldKey,
-        body:
-            isLoading == false ?
-        SingleChildScrollView(
+        body: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: Container(
             child: Column(
@@ -467,8 +432,6 @@ class _LoginPageState extends State<LoginPage> with ValidationMixin {
             ),
           ),
         )
-        : OTPScreenPage(phone: mobileNumberController.text,)
-
     );
   }
 }

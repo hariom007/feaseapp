@@ -49,7 +49,6 @@ class _SplashScreenState extends State<SplashScreen> {
     var data = {
       "RegInstCode": regiInstCode
     };
-    print(data);
     try {
       setState(() {
         isLoading=true;

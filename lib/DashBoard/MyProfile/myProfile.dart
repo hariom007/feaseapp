@@ -9,6 +9,7 @@ import 'package:feaseapp/Values/AppColors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MyProfile extends StatefulWidget {
+
   @override
   _MyProfileState createState() => _MyProfileState();
 }
@@ -17,6 +18,7 @@ class _MyProfileState extends State<MyProfile> {
 
   SharedPreferences sharedPreferences;
   bool isLoading = false;
+  bool isloading = false;
   String url;
 
   void uploadStudent() async{
@@ -25,7 +27,7 @@ class _MyProfileState extends State<MyProfile> {
     var data = {
       "MobileNo": mobileNum
     };
-    print(data);
+    // print(data);
     try {
       setState(() {
         isLoading=true;
@@ -37,7 +39,7 @@ class _MyProfileState extends State<MyProfile> {
 
       url  = body["Url"];
 
-      print(url);
+      // print(url);
       setState(() {
         isLoading=false;
       });
@@ -50,10 +52,51 @@ class _MyProfileState extends State<MyProfile> {
 
   }
 
+  String Name="", Address ="",regiCode ="";
+
+  void profileShow() async {
+    sharedPreferences = await SharedPreferences.getInstance();
+    var mobileNum = sharedPreferences.getString("MOB");
+    sharedPreferences = await SharedPreferences.getInstance();
+    regiCode = sharedPreferences.getString("ICODE");
+
+    var data = {
+      "MobileNo": mobileNum
+    };
+    // print(data);
+
+    try {
+      setState(() {
+        isloading=true;
+      });
+
+      var res = await CallApi().postData3(data, 'GetStaffPersonalDetail');
+      var body = json.decode(res.body);
+      print(body);
+
+      if (body != null )
+      {
+        Name = body['Name'];
+        Address = body['Address'];
+
+      }
+
+      setState(() {
+        isloading = false;
+      });
+
+    }
+
+    catch(e){
+      print('print error: $e');
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     uploadStudent();
+    profileShow();
   }
 
 
@@ -64,12 +107,12 @@ class _MyProfileState extends State<MyProfile> {
       appBar: AppBar(
         title: Text('My Profile'),
         actions: [
-          IconButton(
+       /*   IconButton(
               icon: Icon(Icons.notifications),
               onPressed: (){
               }
           ),
-
+*/
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
@@ -125,7 +168,7 @@ class _MyProfileState extends State<MyProfile> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Advance Group Tuition',
+                          Text(Name,
                             style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,

@@ -6,6 +6,7 @@ class CallApi{
 
   final String _url='https://finaltestapi.acadmin.in/api/InstituteMasterData/';
   final String _url2='https://finaltestapi.acadmin.in/api/StudentData/';
+  final String _url3='https://finaltestapi.acadmin.in/api/MasterData/';
 
   // final String _url1='https://homexp.in/AgentApi/';
 
@@ -22,6 +23,14 @@ class CallApi{
 
   postData2(data,apiUrl) async {
     var fullUrl = _url2 + apiUrl;
+    return await http.post(
+        fullUrl,
+        body: jsonEncode(data),
+        headers: _setHeaders()
+    );
+  }
+  postData3(data,apiUrl) async {
+    var fullUrl = _url3 + apiUrl;
     return await http.post(
         fullUrl,
         body: jsonEncode(data),

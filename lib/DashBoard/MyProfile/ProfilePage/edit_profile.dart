@@ -1,8 +1,11 @@
+import 'dart:convert';
 import 'dart:io';
-
+import 'package:feaseapp/API/api.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:feaseapp/Values/AppColors.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class EditProfile extends StatefulWidget {
   @override
@@ -13,6 +16,57 @@ class _EditProfileState extends State<EditProfile> {
 
   bool isloading = false;
   File _image;
+  SharedPreferences sharedPreferences;
+
+  TextEditingController name = TextEditingController();
+  TextEditingController email = TextEditingController();
+  TextEditingController address = TextEditingController();
+
+
+  void profileShow() async {
+    sharedPreferences = await SharedPreferences.getInstance();
+    var mobileNum = sharedPreferences.getString("MOB");
+    sharedPreferences = await SharedPreferences.getInstance();
+    var regiCode = sharedPreferences.getString("ICODE");
+    var data = {
+      "MobileNo": mobileNum
+    };
+    // print(data);
+
+    try {
+      setState(() {
+        isloading=true;
+      });
+
+      var res = await CallApi().postData3(data, 'GetStaffPersonalDetail');
+      var body = json.decode(res.body);
+      print(body);
+
+      if (body != null )
+      {
+        name.text = body['Name'];
+        address.text = body['Address'];
+        email.text = body['EmailID'];
+      }
+
+      setState(() {
+        isloading = false;
+      });
+
+    }
+
+    catch(e){
+      print('print error: $e');
+    }
+  }
+
+
+  @override
+  void initState() {
+    super.initState();
+    profileShow();
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +102,7 @@ class _EditProfileState extends State<EditProfile> {
                     ) : Image.file(_image,
                     fit: BoxFit.contain,),
                   ),
-                  Align(
+                  /*Align(
                     alignment: Alignment(0, 0.8),
                     child: MaterialButton(
                       minWidth: 0,
@@ -63,7 +117,7 @@ class _EditProfileState extends State<EditProfile> {
                       ),
                       onPressed: _optionDialogBox,
                     ),
-                  ),
+                  ),*/
                 ],
               ),
             ),
@@ -73,36 +127,51 @@ class _EditProfileState extends State<EditProfile> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   TextField(
+                    controller: name,
                     decoration: InputDecoration(
                       labelText: "Institue Name",
                       labelStyle: TextStyle(
                           fontFamily: 'Montserrat-regular',
                           fontSize: 15
                       ),
+
                     ),
+                    readOnly: true,
                     style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18.0,
+                        fontFamily: 'Montserrat-regular',
                     ),
                   ),
                   const SizedBox(height: 10.0),
                   TextField(
                     decoration: InputDecoration(
-                      labelText: "Institute Code",
+                      labelText: "Institute Email",
                       labelStyle: TextStyle(
                           fontFamily: 'Montserrat-regular',
-                          fontSize: 15
+                          fontSize: 15,
                       ),
+                    ),
+                    textCapitalization: TextCapitalization.sentences,
+                    controller: email,
+                    readOnly: true,
+                    style: TextStyle(
+                        fontFamily: 'Montserrat-regular',
+                      fontSize: 14,
                     ),
                   ),
                   const SizedBox(height: 10.0),
                   TextField(
+                    controller: address,
                     decoration: InputDecoration(
                       labelText: "Institute Address",
                       labelStyle: TextStyle(
                           fontFamily: 'Montserrat-regular',
                           fontSize: 15
                       ),
+                    ),
+                    readOnly: true,
+                    style: TextStyle(
+                      fontFamily: 'Montserrat-regular',
+
                     ),
                   ),
 

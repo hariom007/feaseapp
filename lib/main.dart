@@ -1,3 +1,4 @@
+import 'package:feaseapp/Login_Register/OTPScreen/otp_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:feaseapp/DashBoard/dashBoard.dart';
 import 'package:feaseapp/Login_Register/Login_register/login.dart';
@@ -50,6 +51,7 @@ class Feaseapp extends StatelessWidget {
         '/dashboard' : (BuildContext context) => DashBoard(),
         '/logIn' : (BuildContext context) => LoginPage(),
         '/splashScreen' : (BuildContext context) => SplashScreen(),
+        '/otpScreen' : (BuildContext context) => OTPScreenPage(),
       },
     );
   }

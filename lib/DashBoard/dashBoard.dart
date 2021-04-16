@@ -9,6 +9,7 @@ import 'package:feaseapp/Helper/helper.dart';
 import 'package:feaseapp/Login_Register/Institute_verify/verifivationPending.dart';
 import 'package:feaseapp/MyNavigator/myNavigator.dart';
 import 'package:feaseapp/Values/AppColors.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DashBoard extends StatefulWidget {
 
@@ -23,10 +24,12 @@ class _DashBoardState extends State<DashBoard> {
 
 
   bool showBadge = false;
-
+  bool isLoading = false;
   int _currentIndex = 0;
   int _pState = 0;
   String regiInstiCode;
+
+
   @override
   void initState() {
 
