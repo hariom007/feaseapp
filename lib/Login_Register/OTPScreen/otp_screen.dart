@@ -108,8 +108,6 @@ class _OTPScreenPageState extends State<OTPScreenPage> {
         showAlertDialog(context, 'Invalid Code');
         break;
 
-
-
       default:
         showAlertDialog(context, error.message);
         break;
@@ -207,6 +205,8 @@ class _OTPScreenPageState extends State<OTPScreenPage> {
       var body = json.decode(response.body);
       print(body);
       String access_token = body['access_token'];
+      print("Device token"+access_token);
+
       String insCode = body['InstCode'];
 
       if(insCode != '0'){
@@ -226,6 +226,7 @@ class _OTPScreenPageState extends State<OTPScreenPage> {
       else{
         Navigator.push(context, MaterialPageRoute(builder: (context)=> FillInstituteDetails(
           access_token: access_token,
+          mobileNumber: removerCountryCode,
         )));
       }
     }

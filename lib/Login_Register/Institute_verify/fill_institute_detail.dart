@@ -13,8 +13,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class FillInstituteDetails extends StatefulWidget {
 
-  final String access_token;
-  FillInstituteDetails({Key key, this.access_token}) : super(key: key);
+  final String access_token,mobileNumber;
+  FillInstituteDetails({Key key, this.access_token,this.mobileNumber}) : super(key: key);
 
   @override
   _FillInstituteDetailsState createState() => _FillInstituteDetailsState();
@@ -225,6 +225,7 @@ class _FillInstituteDetailsState extends State<FillInstituteDetails> with Valida
     getBindInstituteType();
     getBindBoardTypeList();
     getBindUniversityList();
+    contactController.text = '${widget.mobileNumber}';
 
   }
 
@@ -237,10 +238,10 @@ class _FillInstituteDetailsState extends State<FillInstituteDetails> with Valida
       "EmailID": emailController.text,
       "ContactDetail": contactController.text,
       "WebSite": websiteController.text,
-      "CampusID": bindCampus.id,
-      "InstTypeID": bindInstituteType.id,
-      "BoardID": bindBoardType.id,
-      "UniversityID": bindUniversity.id,
+      "CampusID": bindCampus.id==null ? '' : bindCampus.id,
+      "InstTypeID": bindInstituteType.id==null ? '' : bindInstituteType.id,
+      "BoardID": bindBoardType.id==null ? '' : bindBoardType.id,
+      "UniversityID": bindUniversity.id==null ? '' : bindUniversity.id,
       "InstAddress": addressController.text,
       "InstShortName": shortNameController.text,
       "place": placeController.text,
@@ -249,7 +250,6 @@ class _FillInstituteDetailsState extends State<FillInstituteDetails> with Valida
       "CenterCode": centerCodeController.text,
       "InstLogo" : imgData,
       "DeviceToken" : '${widget.access_token}',
-
 
     };
     print(data);
@@ -261,27 +261,25 @@ class _FillInstituteDetailsState extends State<FillInstituteDetails> with Valida
       var body = json.decode(res.body);
       print("Save New Institute : "+body.toString());
 
-      if (body['ddID'] != null)
-      {
-        String regiInstiCode = body['ddID'];
-        sharedPreferences = await SharedPreferences.getInstance();
-        sharedPreferences.setString("ICODE", regiInstiCode);
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>UploadInstituedocuments(InstTypeId : InstTypeId,regiInstiCode: regiInstiCode,)));
-      }
-      else
-      {
-
-        Navigator.pop(context);
-        Fluttertoast.showToast(
-          msg: "Error Occured",
-          textColor: Colors.black,
-          toastLength: Toast.LENGTH_SHORT,
-          fontSize: 15,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.white,
-        );
-
-      }
+        if (body['ddID'] != null && body['ddlNm'] != null)
+        {
+          String regiInstiCode = body['ddID'];
+          sharedPreferences = await SharedPreferences.getInstance();
+          sharedPreferences.setString("ICODE", regiInstiCode);
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>UploadInstituedocuments(InstTypeId : InstTypeId,regiInstiCode: regiInstiCode,)));
+        }
+        else
+        {
+          Navigator.pop(context);
+          Fluttertoast.showToast(
+            msg: "Error Occured",
+            textColor: Colors.black,
+            toastLength: Toast.LENGTH_SHORT,
+            fontSize: 15,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.white,
+          );
+        }
       setState(() {
         isLoading=false;
       });
@@ -550,6 +548,7 @@ class _FillInstituteDetailsState extends State<FillInstituteDetails> with Valida
                                       ),
                                       child: TextFormField(
                                         autofocus: false,
+                                        readOnly: true,
                                         controller: contactController,
                                         validator: validateMobile,
                                         decoration: InputDecoration(
